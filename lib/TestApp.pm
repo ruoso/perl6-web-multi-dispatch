@@ -1,7 +1,6 @@
 use FazApp;
 class TestApp is FazApp {
     # the controllers are modules that export candidates into the multi dispatch
-    our proto dispatch(|) {*}
     use TestApp::Controller::Root;
     use TestApp::Controller::Foo;
 

@@ -95,10 +95,8 @@ multi dispatch( TestApp::Context::Bar $c, HTTP::Request $req ) is export {
 
 in `lib/TestApp.pm`:
 ```
-    # the controllers are modules that export candidates into the multi dispatch
-    our proto dispatch(|) {*}
-    use TestApp::Controller::Root;
-    use TestApp::Controller::Foo;
+use TestApp::Controller::Root;
+use TestApp::Controller::Foo;
 ```
 
 in `lib/TestApp/Controller/Foo.pm`:
