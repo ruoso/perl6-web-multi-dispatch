@@ -83,3 +83,26 @@ multi dispatch( TestApp::Context::Bar $c, HTTP::Request $req ) is export {
    recursion, there's not enough meta-data available on how the
    recursion may proceed.
  * You can, however, use the context objects to implement that, since you will end up building a tree of objects where the inner contexts hold references to the outer contexts.
+
+## How do I make the code modular?
+
+ * Create a bunch of `Controller` modules
+ * implement `multi dispatch(...) is export {...}`
+ * `use` the controllers that declare root actions in the main app
+ * in those controllers `use` the ones that extend that part:
+ * This is necessary because the candidates for a multi are lexically scoped
+ * each controller needs to `import` the candidates that it may need to call
+
+in `lib/TestApp.pm`:
+```
+    # the controllers are modules that export candidates into the multi dispatch
+    our proto dispatch(|) {*}
+    use TestApp::Controller::Root;
+    use TestApp::Controller::Foo;
+```
+
+in `lib/TestApp/Controller/Foo.pm`:
+```
+use TestApp::Controller::Bar;
+```
+
