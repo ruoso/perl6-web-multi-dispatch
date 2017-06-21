@@ -8,10 +8,7 @@ class FazApp::RequestContext {
 }
 
 class FazApp {
-    has Int $.port;
-    has Bool $.is_https;
-
-    method generate_context(HTTP::Request $req, HTTP::Response $res) {
+    multi method generate_context(HTTP::Request $req, HTTP::Response $res) {
         return FazApp::RequestContext.new(:$req, :$res);
     }
     
