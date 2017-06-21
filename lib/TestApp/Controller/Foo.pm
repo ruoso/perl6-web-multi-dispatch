@@ -10,8 +10,7 @@ multi dispatch( 'foo', Int(StrToInt) $foo_id, *@remaining ) is export {
     dispatch(TestApp::Context::Foo.new(:foo_id($foo_id)), |@remaining);
 }
 
-multi dispatch( TestApp::Context::Foo $c,
-                HTTP::Request $req, HTTP::Response $res ) is export {
-    $res.status = 200;
-    $res.message = "Final request in the chain for foo " ~ $c.foo_id;
+multi dispatch( TestApp::Context::Foo $c, HTTP::Request $req ) is export {
+    $*c.res.status = 200;
+    $*c.res.close("Final request in the chain for foo " ~ $c.foo_id);
 }

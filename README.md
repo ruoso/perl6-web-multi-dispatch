@@ -20,10 +20,9 @@ multi dispatch( 'foo', Int(StrToInt) $foo_id, *@remaining ) is export {
     dispatch(TestApp::Context::Foo.new(:foo_id($foo_id)), |@remaining);
 }
 
-multi dispatch( TestApp::Context::Foo $c,
-                HTTP::Request $req, HTTP::Response $res ) is export {
-    $res.status = 200;
-    $res.message = "Final request in the chain for foo " ~ $c.foo_id;
+multi dispatch( TestApp::Context::Foo $c, HTTP::Request $req ) is export {
+    $*res.status = 200;
+    $*res.close("Final request in the chain for foo " ~ $c.foo_id);
 }
 ```
 
@@ -39,11 +38,10 @@ multi dispatch( TestApp::Context::Foo $c,
   dispatch(TestApp::Context::Bar.new(:foocontext($c),
                                      :bar_id($bar_id)), |@remaining);
 }
-multi dispatch( TestApp::Context::Bar $c,
-                HTTP::Request $req, HTTP::Response $res ) is export {
-  $res.status = 200;
-  $res.message = "Final action in the chain for foo " ~ $c.foocontext.foo_id ~
-    " bar " ~ $c.bar_id;
+multi dispatch( TestApp::Context::Bar $c, HTTP::Request $req ) is export {
+  $*res.status = 200;
+  $*res.close("Final action in the chain for foo " ~ $c.foocontext.foo_id ~
+    " bar " ~ $c.bar_id);
 }
 ```
 
@@ -52,8 +50,13 @@ multi dispatch( TestApp::Context::Bar $c,
  * Match the request and response objects
 
 ```
-multi dispatch( HTTP::Request $req, HTTP::Response $res ) is export {
-  $res.status = 200;
-  $res.message = "Final request in the chain on the root context";
+multi dispatch( HTTP::Request $req ) is export {
+  $*res.status = 200;
+  $*res.close("Final request in the chain on the root context")x;
 }
 ```
+
+## How do I get a link to an action?
+
+ * Because the action dispatching is done by the language itself via
+   recursion, there's not enough meta-data available on how 

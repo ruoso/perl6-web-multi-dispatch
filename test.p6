@@ -3,26 +3,10 @@ use Test;
 use lib 'lib';
 use HTTP::Request;
 use HTTP::Response;
+use TestApp;
 
-use TestApp::Controller::Root;
-use TestApp::Controller::Bar;
-use TestApp::Controller::Foo;
-
-sub handle_request(HTTP::Request $req, HTTP::Response $res) {
-  my @parts = grep { $_ ne "" }, split /\//, $req.path;
-  dispatch(|@parts, $req, $res);
-  CATCH {
-    when X::Multi::NoMatch {
-      $res.status = 404;
-      $res.message = $req.path ~ " Not found ";
-    }
-    default {
-      $res.status = 500;
-      $res.message = $req.path ~ " Error: " ~ .gist;
-    }
-  }
-}
-
+my $app = TestApp.new();
+my $handle_request = $app.generate_dispatcher();
 
 my @tests = (
              ['GET', '/foo/1/bar/2', 200],
@@ -43,7 +27,7 @@ for @tests -> $test {
   my $method = $test[0];
   my $path = $test[1];
   my $res = HTTP::Response.new();
-  my $req = HTTP::Request.new(:method($method), :path($path));
-  handle_request($req, $res);
+  my $req = HTTP::Request.new(:method($method), :uri($path));
+  $handle_request($req, $res);
   is $res.status, $test[2], "$method $path";
 }
