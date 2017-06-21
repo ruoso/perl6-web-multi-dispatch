@@ -52,7 +52,7 @@ multi dispatch( TestApp::Context::Bar $c, HTTP::Request $req ) is export {
 ```
 multi dispatch( HTTP::Request $req ) is export {
   $*res.status = 200;
-  $*res.close("Final request in the chain on the root context")x;
+  $*res.close("Final request in the chain on the root context");
 }
 ```
 
