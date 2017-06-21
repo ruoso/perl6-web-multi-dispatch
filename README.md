@@ -80,4 +80,6 @@ multi dispatch( TestApp::Context::Bar $c, HTTP::Request $req ) is export {
 ## How do I get a link to an action?
 
  * Because the action dispatching is done by the language itself via
-   recursion, there's not enough meta-data available on how 
+   recursion, there's not enough meta-data available on how the
+   recursion may proceed.
+ * You can, however, use the context objects to implement that, since you will end up building a tree of objects where the inner contexts hold references to the outer contexts.
