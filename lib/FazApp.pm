@@ -8,7 +8,7 @@ class FazApp::RequestContext {
 }
 
 class FazApp {
-    multi method generate_context(HTTP::Request $req, HTTP::Response $res) {
+    method generate_context(HTTP::Request $req, HTTP::Response $res) {
         return FazApp::RequestContext.new(:$req, :$res);
     }
     
